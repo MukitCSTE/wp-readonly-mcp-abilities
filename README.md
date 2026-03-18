@@ -1,6 +1,12 @@
-# WP Readonly MCP Abilities
+# MCP Adapter Readonly Abilities
 
-A WordPress plugin that registers read-only abilities for posts, pages, categories, and tags via the Model Context Protocol (MCP). Once installed with the MCP Adapter, AI clients like Claude can access your WordPress content.
+A WordPress plugin that registers read-only abilities for posts, pages, categories, tags, comments, and media via the Model Context Protocol (MCP). Once installed with the MCP Adapter, AI clients like Claude can access your WordPress content.
+
+## Download
+
+**Latest Release:** [v1.0.0](https://github.com/MukitCSTE/wp-readonly-mcp-abilities/releases/tag/v1.0.0)
+
+[Download mcp-adapter-readonly-abilities-1.0.0.zip](https://github.com/MukitCSTE/wp-readonly-mcp-abilities/releases/download/v1.0.0/mcp-adapter-readonly-abilities-1.0.0.zip)
 
 ## Requirements
 
@@ -10,14 +16,14 @@ A WordPress plugin that registers read-only abilities for posts, pages, categori
 
 ## Installation
 
-1. Download the plugin files
-2. Upload the `wp-readonly-mcp-abilities` folder to `/wp-content/plugins/`
+1. Download the [latest release](https://github.com/MukitCSTE/wp-readonly-mcp-abilities/releases/latest)
+2. Upload the zip via Plugins > Add New > Upload Plugin
 3. Activate the plugin through the WordPress admin panel
 4. Ensure the MCP Adapter plugin is also installed and activated
 
 **Important:** Activate plugins in this order:
 1. First: MCP Adapter
-2. Then: WP Readonly MCP Abilities
+2. Then: MCP Adapter Readonly Abilities
 
 ## Available Abilities
 
@@ -28,6 +34,33 @@ A WordPress plugin that registers read-only abilities for posts, pages, categori
 | `reader/get-pages` | Get all published pages |
 | `reader/get-categories` | Get all categories |
 | `reader/get-tags` | Get all tags |
+| `reader/get-comments` | Get approved comments (filter by post) |
+| `reader/get-media` | Get media attachments (filter by mime type) |
+| `reader/get-media-item` | Get a single media item by ID |
+
+## Ability Parameters
+
+### reader/get-posts
+- `per_page` (int): Number of posts, default 20, max 100
+- `page` (int): Page number, default 1
+- `search` (string): Search keyword
+
+### reader/get-post
+- `id` (int, required): Post ID
+
+### reader/get-pages
+- `per_page` (int): Number of pages, default 20
+
+### reader/get-comments
+- `post_id` (int): Filter by post ID
+- `per_page` (int): Number of comments, default 20, max 100
+
+### reader/get-media
+- `per_page` (int): Number of items, default 20, max 100
+- `mime_type` (string): Filter by type (e.g., "image", "video", "application/pdf")
+
+### reader/get-media-item
+- `id` (int, required): Media ID
 
 ## Claude Desktop Configuration
 
@@ -38,9 +71,8 @@ A WordPress plugin that registers read-only abilities for posts, pages, categori
   "mcpServers": {
     "wordpress": {
       "command": "npx",
-      "args": ["-y", "@automattic/mcp-wordpress-remote@latest"],
+      "args": ["-y", "@anthropic-ai/mcp-remote@latest", "http://localhost:8081/index.php?rest_route=/mcp/mcp-adapter-default-server/sse"],
       "env": {
-        "WP_API_URL": "http://localhost:8081/index.php?rest_route=/mcp/mcp-adapter-default-server",
         "WP_API_USERNAME": "your-username",
         "WP_API_PASSWORD": "your-application-password"
       }
@@ -56,9 +88,8 @@ A WordPress plugin that registers read-only abilities for posts, pages, categori
   "mcpServers": {
     "wordpress": {
       "command": "npx",
-      "args": ["-y", "@automattic/mcp-wordpress-remote@latest"],
+      "args": ["-y", "@anthropic-ai/mcp-remote@latest", "https://your-site.com/wp-json/mcp/mcp-adapter-default-server/sse"],
       "env": {
-        "WP_API_URL": "https://your-site.com/wp-json/mcp/mcp-adapter-default-server",
         "WP_API_USERNAME": "your-username",
         "WP_API_PASSWORD": "your-application-password"
       }
@@ -77,52 +108,26 @@ A WordPress plugin that registers read-only abilities for posts, pages, categori
    - Click "Add New Application Password"
    - Copy the generated password (spaces are fine)
 
-## Production Deployment
+## Example Prompts for Claude
 
-### Prerequisites
+Once connected, try these prompts:
 
-- WordPress 6.9+ with HTTPS enabled
-- Admin access to install plugins
-- MCP Adapter plugin installed
+**Posts:**
+- "Get my latest 10 blog posts"
+- "Search for posts about 'tutorial'"
+- "Show me the full content of post ID 42"
 
-### Steps
+**Pages:**
+- "List all pages on my site"
 
-1. **Install MCP Adapter:**
-   - Download from [WordPress/mcp-adapter](https://github.com/WordPress/mcp-adapter)
-   - Upload via Plugins > Add New > Upload Plugin
-   - Activate the plugin
+**Comments:**
+- "Get recent comments"
+- "Show comments on post ID 15"
 
-2. **Install WP Readonly MCP Abilities:**
-   - Upload this plugin to `/wp-content/plugins/`
-   - Activate via Plugins menu
-
-3. **Create MCP User:**
-   - Go to Users > Add New
-   - Create user with **Subscriber** role
-   - Generate Application Password
-
-4. **Update Claude Desktop config:**
-   - Use your production URL with `/wp-json/` path
-   - Use the new user credentials
-
-### wp-config.php Settings (if needed)
-
-For local development without HTTPS:
-
-```php
-define( 'WP_ENVIRONMENT_TYPE', 'local' );
-```
-
-For dynamic URL detection (useful for multiple environments):
-
-```php
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
-            (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
-            ? 'https://' : 'http://';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-define('WP_HOME', $protocol . $host);
-define('WP_SITEURL', $protocol . $host);
-```
+**Media:**
+- "List all images in my media library"
+- "Get details for media ID 100"
+- "Show all PDF files"
 
 ## Security Notes
 
@@ -138,4 +143,4 @@ GPL-2.0-or-later
 
 ## Author
 
-Md Mukit Khan <mukitkhan07@gmail.com>
+Md Mukit Khan - [GitHub](https://github.com/MukitCSTE)
