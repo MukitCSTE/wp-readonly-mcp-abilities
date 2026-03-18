@@ -8,7 +8,7 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Registers read-only abilities for WordPress content via MCP (Model Context Protocol). Allows AI clients like Claude to access your posts, pages, categories, tags, comments, and media.
+Registers read-only abilities for WordPress content via MCP. AI clients like Claude can access posts, pages, comments, and media.
 
 == Description ==
 
