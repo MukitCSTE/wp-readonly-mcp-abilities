@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: MCP Adapter Readonly Abilities Plugin
+ * Plugin Name: MCP Adapter Readonly Abilities
  * Plugin URI: https://github.com/MukitCSTE/wp-readonly-mcp-abilities
  * Description: Registers read-only abilities for WordPress posts, pages, categories, and tags via MCP (Model Context Protocol). Once installed with MCP Adapter, AI clients like Claude can access your content.
  * Version: 1.0.0

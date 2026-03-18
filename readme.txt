@@ -1,4 +1,4 @@
-=== MCP Adapter Readonly Abilities Plugin ===
+=== MCP Adapter Readonly Abilities ===
 Contributors: mukitkhan
 Tags: mcp, ai, content, readonly, api
 Requires at least: 6.9
@@ -12,7 +12,7 @@ Registers read-only abilities for WordPress content via MCP (Model Context Proto
 
 == Description ==
 
-MCP Adapter Readonly Abilities Plugin extends WordPress with read-only content abilities for the Model Context Protocol (MCP). Once installed with MCP Adapter, AI clients can securely access your published content.
+MCP Adapter Readonly Abilities extends WordPress with read-only content abilities for the Model Context Protocol (MCP). Once installed with MCP Adapter, AI clients can securely access your published content.
 
 **Features:**
 
@@ -58,7 +58,7 @@ Follow these steps to connect Claude Desktop to your WordPress site:
 
 Install and activate on your WordPress site:
 1. MCP Adapter plugin
-2. MCP Adapter Readonly Abilities Plugin (this plugin)
+2. MCP Adapter Readonly Abilities (this plugin)
 
 **Step 2: Get Your MCP Endpoint**
 
