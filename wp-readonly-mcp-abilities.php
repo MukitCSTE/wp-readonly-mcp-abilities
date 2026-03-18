@@ -174,6 +174,101 @@ function mcp_reader_register_abilities() {
             ),
         )
     );
+
+    // Get comments
+    wp_register_ability(
+        'reader/get-comments',
+        array(
+            'category'    => 'reader',
+            'label'       => __( 'Get Comments', 'mcp-adapter-readonly-abilities' ),
+            'description' => __( 'Returns approved comments.', 'mcp-adapter-readonly-abilities' ),
+            'input_schema' => array(
+                'type'       => 'object',
+                'properties' => array(
+                    'post_id' => array(
+                        'type'        => 'integer',
+                        'description' => 'Filter by post ID (optional)',
+                    ),
+                    'per_page' => array(
+                        'type'        => 'integer',
+                        'description' => 'Number of comments (default 20, max 100)',
+                        'default'     => 20,
+                    ),
+                ),
+            ),
+            'output_schema' => array(
+                'type' => 'array',
+            ),
+            'permission_callback' => '__return_true',
+            'execute_callback'    => 'mcp_reader_get_comments',
+            'meta' => array(
+                'mcp' => array( 'public' => true ),
+                'annotations' => array( 'readonly' => true ),
+            ),
+        )
+    );
+
+    // Get media
+    wp_register_ability(
+        'reader/get-media',
+        array(
+            'category'    => 'reader',
+            'label'       => __( 'Get Media', 'mcp-adapter-readonly-abilities' ),
+            'description' => __( 'Returns media attachments.', 'mcp-adapter-readonly-abilities' ),
+            'input_schema' => array(
+                'type'       => 'object',
+                'properties' => array(
+                    'per_page' => array(
+                        'type'        => 'integer',
+                        'description' => 'Number of media items (default 20, max 100)',
+                        'default'     => 20,
+                    ),
+                    'mime_type' => array(
+                        'type'        => 'string',
+                        'description' => 'Filter by mime type (e.g., image, video, application/pdf)',
+                    ),
+                ),
+            ),
+            'output_schema' => array(
+                'type' => 'array',
+            ),
+            'permission_callback' => '__return_true',
+            'execute_callback'    => 'mcp_reader_get_media',
+            'meta' => array(
+                'mcp' => array( 'public' => true ),
+                'annotations' => array( 'readonly' => true ),
+            ),
+        )
+    );
+
+    // Get single media by ID
+    wp_register_ability(
+        'reader/get-media-item',
+        array(
+            'category'    => 'reader',
+            'label'       => __( 'Get Single Media', 'mcp-adapter-readonly-abilities' ),
+            'description' => __( 'Returns a single media item by ID.', 'mcp-adapter-readonly-abilities' ),
+            'input_schema' => array(
+                'type'       => 'object',
+                'required'   => array( 'id' ),
+                'properties' => array(
+                    'id' => array(
+                        'type'        => 'integer',
+                        'description' => 'Media ID',
+                    ),
+                ),
+            ),
+            'output_schema' => array(
+                'type' => 'object',
+            ),
+            'permission_callback' => '__return_true',
+            'execute_callback'    => 'mcp_reader_get_media_item',
+            'meta' => array(
+                'mcp' => array( 'public' => true ),
+                'annotations' => array( 'readonly' => true ),
+            ),
+        )
+    );
 }
 
 /**
@@ -323,4 +418,108 @@ function mcp_reader_get_tags() {
     }
 
     return $result;
+}
+
+/**
+ * Get approved comments.
+ *
+ * @param array $input Input parameters.
+ * @return array Comments data.
+ */
+function mcp_reader_get_comments( $input ) {
+    $per_page = min( intval( $input['per_page'] ?? 20 ), 100 );
+
+    $args = array(
+        'status'  => 'approve',
+        'number'  => $per_page,
+        'orderby' => 'comment_date',
+        'order'   => 'DESC',
+    );
+
+    if ( ! empty( $input['post_id'] ) ) {
+        $args['post_id'] = intval( $input['post_id'] );
+    }
+
+    $comments = get_comments( $args );
+    $result = array();
+
+    foreach ( $comments as $comment ) {
+        $result[] = array(
+            'id'          => $comment->comment_ID,
+            'post_id'     => $comment->comment_post_ID,
+            'author'      => $comment->comment_author,
+            'content'     => $comment->comment_content,
+            'date'        => $comment->comment_date,
+            'parent'      => $comment->comment_parent,
+        );
+    }
+
+    return $result;
+}
+
+/**
+ * Get media attachments.
+ *
+ * @param array $input Input parameters.
+ * @return array Media data.
+ */
+function mcp_reader_get_media( $input ) {
+    $per_page = min( intval( $input['per_page'] ?? 20 ), 100 );
+
+    $args = array(
+        'post_type'      => 'attachment',
+        'post_status'    => 'inherit',
+        'posts_per_page' => $per_page,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    );
+
+    if ( ! empty( $input['mime_type'] ) ) {
+        $args['post_mime_type'] = sanitize_text_field( $input['mime_type'] );
+    }
+
+    $query = new WP_Query( $args );
+    $result = array();
+
+    foreach ( $query->posts as $media ) {
+        $result[] = array(
+            'id'        => $media->ID,
+            'title'     => $media->post_title,
+            'url'       => wp_get_attachment_url( $media->ID ),
+            'mime_type' => $media->post_mime_type,
+            'alt'       => get_post_meta( $media->ID, '_wp_attachment_image_alt', true ),
+            'caption'   => $media->post_excerpt,
+            'date'      => $media->post_date,
+        );
+    }
+
+    return $result;
+}
+
+/**
+ * Get single media item by ID.
+ *
+ * @param array $input Input parameters.
+ * @return array Media data or error.
+ */
+function mcp_reader_get_media_item( $input ) {
+    $media = get_post( intval( $input['id'] ) );
+
+    if ( ! $media || $media->post_type !== 'attachment' ) {
+        return array( 'error' => 'Media not found' );
+    }
+
+    $metadata = wp_get_attachment_metadata( $media->ID );
+
+    return array(
+        'id'        => $media->ID,
+        'title'     => $media->post_title,
+        'url'       => wp_get_attachment_url( $media->ID ),
+        'mime_type' => $media->post_mime_type,
+        'alt'       => get_post_meta( $media->ID, '_wp_attachment_image_alt', true ),
+        'caption'   => $media->post_excerpt,
+        'description' => $media->post_content,
+        'date'      => $media->post_date,
+        'metadata'  => $metadata ? $metadata : array(),
+    );
 }
