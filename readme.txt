@@ -1,6 +1,6 @@
 === MCP Adapter Readonly Abilities Plugin ===
 Contributors: mukitkhan
-Tags: mcp, api, content, readonly, ai, claude
+Tags: mcp, ai, content, readonly, api
 Requires at least: 6.9
 Tested up to: 6.9
 Requires PHP: 7.4
@@ -29,16 +29,14 @@ MCP Adapter Readonly Abilities Plugin extends WordPress with read-only content a
 
 **Available Abilities:**
 
-| Ability | Description |
-|---------|-------------|
-| `reader/get-posts` | Returns all published posts with pagination and search |
-| `reader/get-post` | Returns a single post by ID |
-| `reader/get-pages` | Returns all published pages |
-| `reader/get-categories` | Returns all categories |
-| `reader/get-tags` | Returns all tags |
-| `reader/get-comments` | Returns approved comments (optionally filter by post) |
-| `reader/get-media` | Returns media attachments (optionally filter by mime type) |
-| `reader/get-media-item` | Returns a single media item by ID |
+* `reader/get-posts` - Returns all published posts with pagination and search
+* `reader/get-post` - Returns a single post by ID
+* `reader/get-pages` - Returns all published pages
+* `reader/get-categories` - Returns all categories
+* `reader/get-tags` - Returns all tags
+* `reader/get-comments` - Returns approved comments (optionally filter by post)
+* `reader/get-media` - Returns media attachments (optionally filter by mime type)
+* `reader/get-media-item` - Returns a single media item by ID
 
 **Requirements:**
 
