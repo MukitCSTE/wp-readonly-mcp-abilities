@@ -1,7 +1,7 @@
 === MCP Adapter Readonly Abilities ===
 Contributors: mukitkhan
 Tags: mcp, ai, content, readonly, api
-Requires at least: 6.9
+Requires at least: 6.8
 Tested up to: 6.9
 Requires PHP: 7.4
 Stable tag: 1.0.0
@@ -40,7 +40,7 @@ MCP Adapter Readonly Abilities extends WordPress with read-only content abilitie
 
 **Requirements:**
 
-* WordPress 6.9 or higher
+* WordPress 6.8 or higher
 * MCP Adapter plugin installed and configured
 
 == Installation ==
