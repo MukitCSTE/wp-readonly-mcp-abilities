@@ -10,9 +10,10 @@ A WordPress plugin that registers read-only abilities for posts, pages, categori
 
 ## Requirements
 
-- WordPress 6.9 or higher
+- WordPress 6.8 or higher
 - PHP 7.4 or higher
 - [WordPress MCP Adapter](https://github.com/WordPress/mcp-adapter) plugin
+- **WordPress 6.8 only:** [Abilities API plugin](https://github.com/WordPress/abilities-api) (built-in for WordPress 6.9+)
 
 ## Installation
 

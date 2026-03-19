@@ -42,6 +42,7 @@ MCP Adapter Readonly Abilities extends WordPress with read-only content abilitie
 
 * WordPress 6.8 or higher
 * MCP Adapter plugin installed and configured
+* **WordPress 6.8 only:** Abilities API plugin (built-in for WordPress 6.9+)
 
 == Installation ==
 
